@@ -89,6 +89,14 @@ fun AdmobScreen(
             }
         }
         if (viewState.adView != null) {
+            viewState.adView?.let { adView ->
+                AndroidView(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth(),
+                    factory = { adView }
+                )
+            }
             AndroidView(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
