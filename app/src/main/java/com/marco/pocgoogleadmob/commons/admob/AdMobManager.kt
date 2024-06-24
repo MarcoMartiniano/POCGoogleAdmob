@@ -42,6 +42,28 @@ class AdMobManager(private val context: Context) {
             object : InterstitialAdLoadCallback() {
                 // Called when ad fails to load
                 override fun onAdFailedToLoad(adError: LoadAdError) {
+                    when (adError.code) {
+                        //code(0) Something happened internally; for instance, an invalid response was received from the ad server.
+                        AdRequest.ERROR_CODE_INTERNAL_ERROR -> {
+                            Log.d("AdMobManager", "Internal error: ${adError.message}")
+                        }
+                        //code(1) The ad request was invalid; for instance, the ad unit ID was incorrect.
+                        AdRequest.ERROR_CODE_INVALID_REQUEST -> {
+                            Log.d("AdMobManager", "Invalid request: ${adError.message}")
+                        }
+                        //code(2) The ad request was unsuccessful due to network connectivity.
+                        AdRequest.ERROR_CODE_NETWORK_ERROR -> {
+                            Log.d("AdMobManager", "Network error: ${adError.message}")
+                        }
+                        //code(3) The ad request was successful, but no ad was returned due to lack of ad inventory.
+                        AdRequest.ERROR_CODE_NO_FILL -> {
+                            Log.d("AdMobManager", "No fill: ${adError.message}")
+                        }
+
+                        else -> {
+                            Log.d("AdMobManager", "Unknown error: ${adError.message}")
+                        }
+                    }
                     mInterstitialAd = null
                     onAdFailedToLoad.invoke(adError)
                 }
