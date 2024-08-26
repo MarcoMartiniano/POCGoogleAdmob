@@ -1,6 +1,7 @@
 package com.marco.pocgoogleadmob.features.feature_admob
 
 import android.app.Activity
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -74,35 +75,65 @@ fun AdmobScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("AdmobInterstitial")
+            AdmobInterstitialButtons(context = context, action = action)
             Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = {
-                action(AdmobViewAction.AdMob.LoadInterstitial)
-            }) {
-                Text("AdmobInterstitial load")
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = {
-                action(AdmobViewAction.AdMob.ShowInterstitial(activity = context as Activity))
-            }) {
-                Text("AdmobInterstitial show")
-            }
+            AdmobVideoButtons(context = context, action = action)
         }
-        if (viewState.adView != null) {
-            viewState.adView?.let { adView ->
-                AndroidView(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth(),
-                    factory = { adView }
-                )
-            }
-            AndroidView(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth(),
-                factory = { viewState.adView!! }
-            )
-        }
+//        if (viewState.adView != null) {
+//            viewState.adView?.let { adView ->
+//                AndroidView(
+//                    modifier = Modifier
+//                        .align(Alignment.BottomCenter)
+//                        .fillMaxWidth(),
+//                    factory = { adView }
+//                )
+//            }
+//            AndroidView(
+//                modifier = Modifier
+//                    .align(Alignment.BottomCenter)
+//                    .fillMaxWidth(),
+//                factory = { viewState.adView!! }
+//            )
+//        }
+    }
+}
+
+@Composable
+fun AdmobInterstitialButtons(
+    action: (AdmobViewAction) -> Unit,
+    context: Context,
+) {
+    Text("AdmobInterstitial")
+    Spacer(modifier = Modifier.height(24.dp))
+    Button(onClick = {
+        action(AdmobViewAction.AdMob.LoadInterstitial)
+    }) {
+        Text("AdmobInterstitial load")
+    }
+    Spacer(modifier = Modifier.height(24.dp))
+    Button(onClick = {
+        action(AdmobViewAction.AdMob.ShowInterstitial(activity = context as Activity))
+    }) {
+        Text("AdmobInterstitial show")
+    }
+}
+
+@Composable
+fun AdmobVideoButtons(
+    action: (AdmobViewAction) -> Unit,
+    context: Context,
+) {
+    Text("AdmobVideo")
+    Spacer(modifier = Modifier.height(24.dp))
+    Button(onClick = {
+        action(AdmobViewAction.AdMob.LoadVideo(context = context))
+    }) {
+        Text("AdmobVideo load")
+    }
+    Spacer(modifier = Modifier.height(24.dp))
+    Button(onClick = {
+        action(AdmobViewAction.AdMob.ShowVideo(activity = context as Activity))
+    }) {
+        Text("AdmobVideo show")
     }
 }

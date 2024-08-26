@@ -3,6 +3,7 @@ package com.marco.pocgoogleadmob.commons.admob
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -11,10 +12,22 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.gms.ads.rewarded.RewardItem
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 
 class AdMobManager(private val context: Context) {
     // Variable to hold the interstitial ad
     private var mInterstitialAd: InterstitialAd? = null
+
+    // Variable to hold rewardedAd
+    private var rewardedAd: RewardedAd? = null
+
+    // Ad unit ID for rewardedAd
+    private val rewardedAdTestUnitId = "ca-app-pub-3940256099942544/5224354917"
+
+    // Ad unit ID for interstitial
+    private val interstitialTestUnitId = "ca-app-pub-3940256099942544/1033173712"
 
     // Ad unit ID for banner test
     private val adBannerTestUnitId = "ca-app-pub-3940256099942544/9214589741"
@@ -37,7 +50,7 @@ class AdMobManager(private val context: Context) {
         // Load the interstitial ad with specified ad unit ID and ad request
         InterstitialAd.load(
             context,
-            "ca-app-pub-3940256099942544/1033173712",
+            interstitialTestUnitId,
             adRequest,
             object : InterstitialAdLoadCallback() {
                 // Called when ad fails to load
@@ -126,6 +139,85 @@ class AdMobManager(private val context: Context) {
             setAdSize(AdSize.BANNER)
             adUnitId = adBannerTestUnitId
             loadAd(AdRequest.Builder().build())
+        }
+    }
+
+    // Function to load a rewarded ad
+    fun loadRewardedAd(context: Context) {
+        // Create an ad request
+        val adRequest = AdRequest.Builder().build()
+
+        // Load the rewarded ad with the specified ad unit ID
+        RewardedAd.load(
+            context,
+            rewardedAdTestUnitId,  // Ad unit ID for the rewarded ad
+            adRequest,  // Ad request containing the ad parameters
+            object : RewardedAdLoadCallback() {  // Callback to handle ad loading events
+                override fun onAdLoaded(ad: RewardedAd) {
+                    // Called when the ad is successfully loaded
+                    rewardedAd = ad
+                    Log.d("AdMobManager", "Rewarded ad loaded.")
+                }
+
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    // Called when the ad fails to load
+                    rewardedAd = null
+                    Log.d("AdMobManager", "Failed to load rewarded ad: ${adError.message}")
+                }
+            }
+        )
+    }
+
+    // Function to show the rewarded ad
+    fun showRewardedAd(
+        activity: Activity,
+        onUserEarnedReward: (RewardItem) -> Unit = {},  // Callback for when the user earns a reward
+        onAdClicked: () -> Unit = {},  // Callback for when the ad is clicked
+        onAdDismissedFullScreenContent: () -> Unit = {},  // Callback for when the ad is dismissed
+        onAdImpression: () -> Unit = {},  // Callback for when an impression is recorded
+        onAdShowedFullScreenContent: () -> Unit = {},  // Callback for when the ad is shown
+        onAdFailedToShow: (AdError) -> Unit = {}  // Callback for when the ad fails to show
+    ) {
+        // Check if the rewarded ad is loaded and ready to be shown
+        rewardedAd?.let { ad ->
+            // Set the full-screen content callback to handle ad events
+            ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdClicked() {
+                    // Called when the ad is clicked
+                    onAdClicked.invoke()
+                }
+
+                override fun onAdDismissedFullScreenContent() {
+                    // Called when the ad is dismissed
+                    rewardedAd = null
+                    // Optionally load a new ad for the next time
+                    loadRewardedAd(activity)
+                    onAdDismissedFullScreenContent.invoke()
+                }
+
+                override fun onAdImpression() {
+                    // Called when an impression is recorded
+                    onAdImpression.invoke()
+                }
+
+                override fun onAdShowedFullScreenContent() {
+                    // Called when the ad is shown
+                    onAdShowedFullScreenContent.invoke()
+                }
+
+                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                    // Called when the ad fails to show
+                    onAdFailedToShow.invoke(adError)
+                }
+            }
+
+            // Show the rewarded ad and handle the reward event
+            ad.show(activity) { rewardItem ->
+                onUserEarnedReward.invoke(rewardItem)
+            }
+        } ?: run {
+            // Log message if the ad wasn't ready to be shown
+            Log.d("AdMobManager", "The rewarded ad wasn't ready yet.")
         }
     }
 }

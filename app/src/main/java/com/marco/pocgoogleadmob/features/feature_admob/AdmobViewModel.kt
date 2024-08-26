@@ -18,6 +18,7 @@ class AdmobViewModel : ViewModel(), KoinComponent {
 
     // MutableStateFlow to hold the state of the AdmobState
     private var _state = MutableStateFlow(AdmobState())
+
     // Public immutable state flow for observers
     val state = _state.asStateFlow()
 
@@ -28,6 +29,10 @@ class AdmobViewModel : ViewModel(), KoinComponent {
             AdMob.LoadInterstitial -> loadInterstitial()
             // Action to show an interstitial ad
             is AdMob.ShowInterstitial -> showInterstitial(activity = viewAction.activity)
+            // Action to load a video ad
+            is AdMob.LoadVideo -> loadRewardedAd(context = viewAction.context)
+            // Action to show a video ad
+            is AdMob.ShowVideo -> showRewardedAd(activity = viewAction.activity)
             // Action to load a banner ad
             is AdMob.LoadBanner -> loadBanner(context = viewAction.context)
         }
@@ -71,6 +76,37 @@ class AdmobViewModel : ViewModel(), KoinComponent {
             },
             onAdShowedFullScreenContent = {
                 Log.d("AdMobManager", "showInterstitial: onAdShowedFullScreenContent")
+            }
+        )
+    }
+
+    // Function to load a rewarded video ad
+    private fun loadRewardedAd(context: Context) {
+        // Load video ad using AdMobManager with callbacks for success and failure
+        adMobManager.loadRewardedAd(context = context)
+    }
+
+    // Function to show  a rewarded video ad
+    private fun showRewardedAd(activity: Activity) {
+        adMobManager.showRewardedAd(
+            activity = activity,
+            onUserEarnedReward = { reward ->
+                Log.d("AdMobManager", "User earned reward: ${reward.type} (${reward.amount})")
+            },
+            onAdClicked = {
+                Log.d("AdMobManager", "Ad clicked.")
+            },
+            onAdDismissedFullScreenContent = {
+                Log.d("AdMobManager", "Ad dismissed.")
+            },
+            onAdImpression = {
+                Log.d("AdMobManager", "Ad impression recorded.")
+            },
+            onAdShowedFullScreenContent = {
+                Log.d("AdMobManager", "Ad showed full screen.")
+            },
+            onAdFailedToShow = { error ->
+                Log.d("AdMobManager", "Failed to show ad: $error")
             }
         )
     }
