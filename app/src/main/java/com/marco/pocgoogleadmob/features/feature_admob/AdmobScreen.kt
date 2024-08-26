@@ -79,22 +79,16 @@ fun AdmobScreen(
             Spacer(modifier = Modifier.height(24.dp))
             AdmobVideoButtons(context = context, action = action)
         }
-//        if (viewState.adView != null) {
-//            viewState.adView?.let { adView ->
-//                AndroidView(
-//                    modifier = Modifier
-//                        .align(Alignment.BottomCenter)
-//                        .fillMaxWidth(),
-//                    factory = { adView }
-//                )
-//            }
-//            AndroidView(
-//                modifier = Modifier
-//                    .align(Alignment.BottomCenter)
-//                    .fillMaxWidth(),
-//                factory = { viewState.adView!! }
-//            )
-//        }
+        if (viewState.adView != null) {
+            viewState.adView?.let { adView ->
+                AndroidView(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth(),
+                    factory = { adView }
+                )
+            }
+        }
     }
 }
 
