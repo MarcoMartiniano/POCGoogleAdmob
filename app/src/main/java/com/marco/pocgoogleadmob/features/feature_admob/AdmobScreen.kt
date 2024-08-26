@@ -58,7 +58,7 @@ fun AdmobScreen(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        action(AdmobViewAction.AdMob.LoadBanner(context = context))
+        action(AdmobViewAction.AdMob.LoadBanner)
     }
 
     DisposableEffect(viewState.adView) {
@@ -120,7 +120,7 @@ fun AdmobVideoButtons(
     Text("AdmobVideo")
     Spacer(modifier = Modifier.height(24.dp))
     Button(onClick = {
-        action(AdmobViewAction.AdMob.LoadVideo(context = context))
+        action(AdmobViewAction.AdMob.LoadVideo)
     }) {
         Text("AdmobVideo load")
     }

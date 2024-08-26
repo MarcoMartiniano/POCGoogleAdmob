@@ -1,7 +1,6 @@
 package com.marco.pocgoogleadmob.features.feature_admob
 
 import android.app.Activity
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.marco.pocgoogleadmob.commons.admob.AdMobManager
@@ -30,18 +29,18 @@ class AdmobViewModel : ViewModel(), KoinComponent {
             // Action to show an interstitial ad
             is AdMob.ShowInterstitial -> showInterstitial(activity = viewAction.activity)
             // Action to load a video ad
-            is AdMob.LoadVideo -> loadRewardedAd(context = viewAction.context)
+            AdMob.LoadVideo -> loadRewardedAd()
             // Action to show a video ad
             is AdMob.ShowVideo -> showRewardedAd(activity = viewAction.activity)
             // Action to load a banner ad
-            is AdMob.LoadBanner -> loadBanner(context = viewAction.context)
+            AdMob.LoadBanner -> loadBanner()
         }
     }
 
     // Function to load a banner ad
-    private fun loadBanner(context: Context) {
+    private fun loadBanner() {
         // Load banner ad using AdMobManager and update the state with the loaded adView
-        val adView = adMobManager.loadBannerAd(context = context)
+        val adView = adMobManager.loadBannerAd()
         _state.update {
             it.copy(adView = adView)
         }
@@ -81,9 +80,9 @@ class AdmobViewModel : ViewModel(), KoinComponent {
     }
 
     // Function to load a rewarded video ad
-    private fun loadRewardedAd(context: Context) {
+    private fun loadRewardedAd() {
         // Load video ad using AdMobManager with callbacks for success and failure
-        adMobManager.loadRewardedAd(context = context)
+        adMobManager.loadRewardedAd()
     }
 
     // Function to show  a rewarded video ad

@@ -133,7 +133,7 @@ class AdMobManager(private val context: Context) {
     }
 
     // Function to load a banner ad
-    fun loadBannerAd(context: Context): AdView {
+    fun loadBannerAd(): AdView {
         // Create and return an AdView configured with ad size and unit ID
         return AdView(context).apply {
             setAdSize(AdSize.BANNER)
@@ -143,7 +143,7 @@ class AdMobManager(private val context: Context) {
     }
 
     // Function to load a rewarded ad
-    fun loadRewardedAd(context: Context) {
+    fun loadRewardedAd() {
         // Create an ad request
         val adRequest = AdRequest.Builder().build()
 
@@ -191,7 +191,7 @@ class AdMobManager(private val context: Context) {
                     // Called when the ad is dismissed
                     rewardedAd = null
                     // Optionally load a new ad for the next time
-                    loadRewardedAd(activity)
+                    loadRewardedAd()
                     onAdDismissedFullScreenContent.invoke()
                 }
 
